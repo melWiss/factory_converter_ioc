@@ -1,6 +1,6 @@
 import 'package:json_converter_ioc/json_converter_ioc.dart';
 
-class User extends JsonToMap {
+class User {
   final int id;
   final String name;
 
@@ -16,7 +16,6 @@ class User extends JsonToMap {
     );
   }
 
-  @override
   Map<String, dynamic> toMap() => {
         'id': id,
         'name': name,

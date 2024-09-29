@@ -16,7 +16,7 @@ class JsonFactoryIoc {
   final Map<Type, Function(Map<String, dynamic> json)> _registry = {};
 
   /// register a factory method using the type T.
-  void registerFactory<T>(JsonFactoryFunction factory) {
+  void registerFactory<T>(JsonFactoryFunction<T> factory) {
     _registry[T] = factory;
   }
 
