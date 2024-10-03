@@ -1,5 +1,5 @@
-name: json_factory_converter_ioc_generator
-description: A starting point for Dart libraries or applications.
+name: json_ioc_example
+description: A sample command-line application.
 version: 1.0.0
 # repository: https://github.com/my_org/my_repo
 
@@ -8,14 +8,18 @@ environment:
 
 # Add regular dependencies here.
 dependencies:
-  analyzer: ^6.5.0
-  build: ^2.4.1
-  source_gen: ^1.5.0
+  json_factory_ioc:
+    path: ../json_factory_ioc
+  json_converter_ioc:
+    path: ../json_converter_ioc
   json_factory_converter_ioc_annotations:
     path: ../json_factory_converter_ioc_annotations
-  glob: ^2.1.2
   json_annotation: ^4.9.0
 
 dev_dependencies:
   build_runner: ^2.4.11
+  json_factory_converter_ioc_generator:
+    path: ../json_factory_converter_ioc_generator
+  json_serializable: ^6.8.0
   lints: ^3.0.0
+  test: ^1.24.0

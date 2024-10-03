@@ -1,0 +1,18 @@
+builders:
+  json_factory_ioc_configure_registrar:
+    import: "package:json_factory_converter_ioc_generator/json_factory_converter_ioc_generator.dart"
+    builder_factories: ["configureJsonSerializableRegistrar"] # Builder name(BuilderOption) this is a definition
+    build_extensions: { ".dart": [".serializable.json"] }
+    auto_apply: dependents
+    build_to: cache
+    runs_before:
+      [
+        "json_factory_converter_ioc_generator|json_factory_converter_ioc_registrar",
+      ]
+  json_factory_converter_ioc_registrar:
+    import: "package:json_factory_converter_ioc_generator/json_factory_converter_ioc_generator.dart"
+    builder_factories: ["registerFactoriesAndConvertersIoc"] # Builder name(BuilderOption) this is a definition
+    build_extensions: { ".dart": [".json_ioc.g.part"] }
+    auto_apply: dependents
+    build_to: source
+    required_inputs: ["**/*.serializable.json"] # Include the pre-built files as required inputs

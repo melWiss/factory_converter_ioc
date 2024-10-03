@@ -1,8 +1,26 @@
-/// Support for doing something awesome.
-///
-/// More dartdocs go here.
-library;
+import 'package:build/build.dart';
+import 'package:json_factory_converter_ioc_generator/src/json_ioc_generator.dart';
+import 'package:json_factory_converter_ioc_generator/src/json_serializable_registrar.dart';
+import 'package:source_gen/source_gen.dart';
 
-export 'src/json_factory_converter_ioc_generator_base.dart';
 
-// TODO: Export any libraries intended for clients of this package.
+Builder configureJsonSerializableRegistrar(BuilderOptions options) {
+  return LibraryBuilder(
+    JsonSerializableRegistrar(),
+    generatedExtension: '.serializable.json',
+    header: '',
+    formatOutput: (code) {
+      var lines =  code.split('\n');
+      lines.removeRange(0, 4);
+      return lines.join();
+    },
+  );
+}
+
+
+Builder registerFactoriesAndConvertersIoc(BuilderOptions options) {
+  return LibraryBuilder(
+    JsonIocGenerator(),
+    generatedExtension: '.json_ioc.dart',
+  );
+}
