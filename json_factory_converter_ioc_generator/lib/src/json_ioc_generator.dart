@@ -19,9 +19,11 @@ class JsonIocGenerator
     // step 1: prepare files
     final factoryFilesGlob = Glob('**/*.serializable.json');
     final factoryFiles = factoryFilesGlob.listSync();
-    if (factoryFiles.isNotEmpty) {
+    if (_isMethodExist(factoryFiles, true)) {
       buffer
           .writeln("import 'package:json_factory_ioc/json_factory_ioc.dart';");
+    }
+    if (_isMethodExist(factoryFiles, false)) {
       buffer.writeln(
           "import 'package:json_converter_ioc/json_converter_ioc.dart';");
     }
@@ -60,4 +62,17 @@ class JsonIocGenerator
     log.warning('[JsonIocGenerator] is finished✅');
     return buffer.toString();
   }
+
+  bool _isMethodExist(
+          List<FileSystemEntity> factoryFiles, bool isFactoryMethod) =>
+      factoryFiles.any(
+        (element) {
+          var model = JsonSerializableRegistrarModel.fromJson(
+              File(element.path).readAsStringSync());
+          if (isFactoryMethod) {
+            return model.factoryName != null;
+          }
+          return model.converterName != null;
+        },
+      );
 }
