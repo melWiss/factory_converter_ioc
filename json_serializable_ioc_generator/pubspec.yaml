@@ -1,7 +1,7 @@
 name: json_serializable_ioc_generator
-description: A starting point for Dart libraries or applications.
+description: json_serializable_ioc_generator simplifies the registration of toJson and fromJson methods for models annotated with @JsonSerializable. This package works in conjunction with json_serializable_ioc to automatically generate the registration method.
 version: 1.0.0
-# repository: https://github.com/my_org/my_repo
+repository: https://github.com/melWiss/factory_converter_ioc
 
 environment:
   sdk: ^3.4.3
@@ -11,8 +11,7 @@ dependencies:
   analyzer: ^6.5.0
   build: ^2.4.1
   source_gen: ^1.5.0
-  json_serializable_ioc:
-    path: ../json_serializable_ioc
+  json_serializable_ioc: ^1.0.0
   glob: ^2.1.2
   json_annotation: ^4.9.0
 
