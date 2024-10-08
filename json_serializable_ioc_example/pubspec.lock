@@ -263,7 +263,7 @@ packages:
       path: "../json_serializable_ioc_generator"
       relative: true
     source: path
-    version: "1.0.2"
+    version: "1.0.3"
   lints:
     dependency: "direct dev"
     description:

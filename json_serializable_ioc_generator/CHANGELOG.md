@@ -1,3 +1,6 @@
+## 1.0.3
+- Bug fixes
+
 ## 1.0.2
 - Add support for files with more than one model annotated
 

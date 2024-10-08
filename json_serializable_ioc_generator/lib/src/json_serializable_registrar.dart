@@ -7,7 +7,6 @@ import 'package:source_gen/source_gen.dart';
 
 class JsonSerializableRegistrar
     extends GeneratorForAnnotation<JsonSerializable> {
-  JsonSerializableVisitor visitor = JsonSerializableVisitor();
   @override
   String generateForAnnotatedElement(
     Element element,
@@ -15,6 +14,7 @@ class JsonSerializableRegistrar
     BuildStep buildStep,
   ) {
     if (element is ClassElement) {
+      JsonSerializableVisitor visitor = JsonSerializableVisitor();
       visitor.visitClassElement(element);
       log.info('Preparing ${visitor.className}Registrar⌛');
       JsonSerializableRegistrarModel model = JsonSerializableRegistrarModel(

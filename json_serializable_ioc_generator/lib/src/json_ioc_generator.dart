@@ -32,6 +32,7 @@ class JsonIocGenerator
     for (var file in factoryFiles) {
       String filePath = file.path;
       filePath = filePath
+          .replaceAll('\\', '/')
           .replaceAll('./.dart_tool/build/generated/', '')
           .replaceAll('/lib', '')
           .replaceAll('.serializable.json', '.dart');
