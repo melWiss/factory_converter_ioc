@@ -1,39 +1,181 @@
-<!-- 
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+## json_serializable_ioc_generator
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages). 
+`json_serializable_ioc_generator` simplifies the registration of `toJson` and `fromJson` methods for models annotated with `@JsonSerializable`. This package works in conjunction with `json_serializable_ioc` to automatically generate the registration method.
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages). 
--->
+### Features
+- **Automatic Method Registration**: Automatically generates code to register factory and converter methods for models.
+- **Leverages `@JsonSerializable`**: Uses the `json_annotation` package for model serialization.
+- **Custom Annotation for Bootstrapping**: The `@RegisterJsonSerializable` annotation is applied to the method responsible for app configuration (like `main()`), triggering the generation of the `$registerJsonSerializableMethods()` method.
+- **Generated Registration Method**: Generates a `$registerJsonSerializableMethods()` function to register serialization methods at runtime.
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+---
 
-## Features
+### Installation
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+To use `json_serializable_ioc_generator`, add the following dependencies to your `pubspec.yaml`:
 
-## Getting started
+```yaml
+dependencies:
+  json_annotation: ^4.7.0
+  json_serializable_ioc: ^1.0.0
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
-
-## Usage
-
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder. 
-
-```dart
-const like = 'sample';
+dev_dependencies:
+  build_runner: ^2.1.0
+  json_serializable_ioc_generator: ^1.0.0
 ```
 
-## Additional information
+Then run:
 
-TODO: Tell users more about the package: where to find more information, how to 
-contribute to the package, how to file issues, what response they can expect 
-from the package authors, and more.
+```bash
+flutter pub get
+```
+
+### How It Works
+
+1. **Model Annotation**: Annotate your model classes with `@JsonSerializable` from the `json_annotation` package. This triggers the generation of `toJson` and `fromJson` methods.
+2. **RegisterJsonSerializable**: Use the `@RegisterJsonSerializable` annotation to mark a method responsible for dependency configuration, such as the `main` method. This generates the `$registerJsonSerializableMethods()` function.
+3. **Code Generation**: Use the `build_runner` tool to generate the registration method.
+4. **Bootstrap Application**: Call the generated `$registerJsonSerializableMethods()` method to register the serialization methods in the `JsonFactoryIoc` and `JsonConverterIoc` containers.
+
+---
+
+### Basic Usage
+
+#### 1. Annotate Your Model
+
+```dart
+// user.dart
+import 'package:json_annotation/json_annotation.dart';
+
+part 'user.g.dart';
+
+@JsonSerializable()
+class User {
+  final int id;
+  final String name;
+  
+  User({
+    required this.id,
+    required this.name,
+  });
+
+  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+
+  Map<String, dynamic> toJson() => _$UserToJson(this);
+}
+```
+
+In this example, the `User` model is annotated with `@JsonSerializable` from the `json_annotation` package. This will generate `fromJson` and `toJson` methods for this model.
+
+#### 2. Code Generation
+
+Run the following command to trigger code generation:
+
+```bash
+flutter pub run build_runner build
+```
+
+This will generate the `$registerJsonSerializableMethods()` function, which automatically registers the factory and converter methods.
+
+#### 3. Register Serialization Methods
+
+In your `main.dart` or another bootstrap method, use the `@RegisterJsonSerializable` annotation to mark the method for code generation. After code generation, call the generated `$registerJsonSerializableMethods()` function.
+
+```dart
+// main.dart
+import 'dart:convert';
+import 'package:json_ioc_example/user.dart';
+import 'package:json_ioc_example/main.json_ioc.dart';
+import 'package:json_serializable_ioc/json_serializable_ioc.dart';
+
+@RegisterJsonSerializable()
+void main(List<String> arguments) {
+  // Register all annotated models' methods
+  $registerJsonSerializableMethods();
+
+  // Deserialize a User object from JSON
+  User user = factory<User>({
+    "id": 55,
+    "name": "potatoes",
+  });
+
+  // Serialize the User object back to JSON
+  print(jsonEncode(converter<User>(user))); // Output: {"id":55,"name":"potatoes"}
+}
+```
+
+In this example:
+- The `@RegisterJsonSerializable` annotation is used on the `main()` method, which generates the `$registerJsonSerializableMethods()` function.
+- This function registers the `toJson` and `fromJson` methods in the `JsonFactoryIoc` and `JsonConverterIoc` containers.
+- You can then use the `factory<T>()` function to dynamically deserialize a `User` instance from JSON and the `converter<T>()` function to serialize it back to JSON.
+
+---
+
+### API Reference
+
+#### @RegisterJsonSerializable
+
+This annotation is used to mark a method responsible for dependency configuration, typically the `main()` method. It triggers code generation for the `$registerJsonSerializableMethods()` function, which registers the `toJson` and `fromJson` methods of all models annotated with `@JsonSerializable`.
+
+#### Generated Method: `$registerJsonSerializableMethods()`
+
+This method is generated by the code generator and registers all `toJson` and `fromJson` methods of models annotated with `@JsonSerializable` into the `JsonFactoryIoc` and `JsonConverterIoc` containers. It must be called at runtime for proper registration.
+
+---
+
+### Example
+
+```dart
+// user.dart
+import 'package:json_annotation/json_annotation.dart';
+
+part 'user.g.dart';
+
+@JsonSerializable()
+class User {
+  final int id;
+  final String name;
+  
+  User({
+    required this.id,
+    required this.name,
+  });
+
+  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+
+  Map<String, dynamic> toJson() => _$UserToJson(this);
+}
+
+// main.dart
+import 'dart:convert';
+import 'package:json_ioc_example/user.dart';
+import 'package:json_ioc_example/main.json_ioc.dart';
+import 'package:json_serializable_ioc/json_serializable_ioc.dart';
+
+@RegisterJsonSerializable()
+void main(List<String> arguments) {
+  // Register all annotated models' methods
+  $registerJsonSerializableMethods();
+
+  // Deserialize a User object from JSON
+  User user = factory<User>({
+    "id": 55,
+    "name": "potatoes",
+  });
+
+  // Serialize the User object back to JSON
+  print(jsonEncode(converter<User>(user))); // Output: {"id":55,"name":"potatoes"}
+}
+```
+
+---
+
+### FAQ
+
+- **Do I have to annotate every model?**  
+  Yes, each model must be annotated with `@JsonSerializable` to have `toJson` and `fromJson` methods generated.
+
+- **Where do I use `@RegisterJsonSerializable`?**  
+  Use this annotation on a method like `main()` or another initialization method that will trigger the generation of `$registerJsonSerializableMethods()`.
+
+---

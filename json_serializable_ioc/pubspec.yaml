@@ -1,14 +1,11 @@
 name: json_serializable_ioc
-description: A starting point for Dart libraries or applications.
+description: json_serializable_ioc simplifies the serialization and deserialization of models by encapsulating toJson and fromJson methods in a container. It allows developers to register converters and factories for any model, enabling the dynamic use of these methods without knowing their exact names.
 version: 1.0.0
-# repository: https://github.com/my_org/my_repo
+repository: https://github.com/melWiss/factory_converter_ioc
 
 environment:
   sdk: ^3.4.3
 
-# Add regular dependencies here.
-dependencies:
-  # path: ^1.8.0
 
 dev_dependencies:
   lints: ^3.0.0
