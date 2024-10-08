@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:analyzer/dart/element/element.dart';
@@ -13,15 +14,18 @@ class JsonIocGenerator
     extends GeneratorForAnnotation<RegisterJsonSerializable> {
   @override
   Future<String> generateForAnnotatedElement(
-      Element element, ConstantReader annotation, BuildStep buildStep) async {
-    log.warning('Starting [JsonIocGenerator]⌛');
+    Element element,
+    ConstantReader annotation,
+    BuildStep buildStep,
+  ) async {
+    log.info('Starting [JsonIocGenerator]⌛');
     StringBuffer buffer = StringBuffer();
     // step 1: prepare files
     final factoryFilesGlob = Glob('**/*.serializable.json');
     final factoryFiles = factoryFilesGlob.listSync();
-    if (_isMethodExist(factoryFiles)) {
-      buffer
-          .writeln("import 'package:json_serializable_ioc/json_serializable_ioc.dart';");
+    if (factoryFiles.isNotEmpty) {
+      buffer.writeln(
+          "import 'package:json_serializable_ioc/json_serializable_ioc.dart';");
     }
 
     // step 2: add imports
@@ -39,31 +43,29 @@ class JsonIocGenerator
       buffer.writeln("void \$registerJsonSerializableMethods() {");
       for (var element in factoryFiles) {
         File file = File(element.path);
-        JsonSerializableRegistrarModel model =
-            JsonSerializableRegistrarModel.fromJson(file.readAsStringSync());
-        if (model.factoryName != null) {
-          buffer.writeln("JsonFactoryIoc().registerFactory<${model.className}>("
-              "(json) => ${model.factoryName}(json),"
-              ");");
-        }
-        if (model.converterName != null) {
-          buffer.writeln(
-              "JsonConverterIoc().registerConverter<${model.className}>("
-              "(model) => model.${model.converterName}(),"
-              ");");
+        String fileContent = file.readAsStringSync();
+        fileContent = '[${fileContent.replaceAll('}{', '},{')}]';
+        List data = jsonDecode(fileContent);
+        for (var json in data) {
+          JsonSerializableRegistrarModel model =
+              JsonSerializableRegistrarModel.fromMap(json);
+          if (model.factoryName != null) {
+            buffer
+                .writeln("JsonFactoryIoc().registerFactory<${model.className}>("
+                    "(json) => ${model.factoryName}(json),"
+                    ");");
+          }
+          if (model.converterName != null) {
+            buffer.writeln(
+                "JsonConverterIoc().registerConverter<${model.className}>("
+                "(model) => model.${model.converterName}(),"
+                ");");
+          }
         }
       }
       buffer.writeln("}");
     }
-    log.warning('[JsonIocGenerator] is finished✅');
+    log.info('[JsonIocGenerator] is finished✅');
     return buffer.toString();
   }
-
-  bool _isMethodExist(List<FileSystemEntity> factoryFiles) => factoryFiles.any(
-        (element) {
-          var model = JsonSerializableRegistrarModel.fromJson(
-              File(element.path).readAsStringSync());
-          return model.factoryName != null || model.converterName != null;
-        },
-      );
 }

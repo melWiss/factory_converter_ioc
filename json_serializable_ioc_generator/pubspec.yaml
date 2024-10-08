@@ -1,6 +1,6 @@
 name: json_serializable_ioc_generator
 description: json_serializable_ioc_generator simplifies the registration of toJson and fromJson methods for models annotated with @JsonSerializable. This package works in conjunction with json_serializable_ioc to automatically generate the registration method.
-version: 1.0.1
+version: 1.0.2
 repository: https://github.com/melWiss/factory_converter_ioc
 
 environment:

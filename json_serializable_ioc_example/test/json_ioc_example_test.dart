@@ -19,8 +19,10 @@ void main() {
             "name": "potatoes",
           };
           User user = factory<User>(userMap);
+          Profile profile = factory<Profile>(userMap);
 
           expect(jsonEncode(userMap), jsonEncode(converter<User>(user)));
+          expect(jsonEncode(userMap), jsonEncode(converter<Profile>(profile)));
         },
       );
     },

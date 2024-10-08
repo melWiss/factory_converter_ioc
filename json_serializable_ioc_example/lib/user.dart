@@ -15,3 +15,17 @@ class User {
 
   Map<String, dynamic> toJson() => _$UserToJson(this);
 }
+
+@JsonSerializable()
+class Profile {
+  final int id;
+  final String name;
+  Profile({
+    required this.id,
+    required this.name,
+  });
+
+  factory Profile.fromJson(Map<String, dynamic> json) => _$ProfileFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ProfileToJson(this);
+}

@@ -15,3 +15,13 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
     };
+
+Profile _$ProfileFromJson(Map<String, dynamic> json) => Profile(
+      id: (json['id'] as num).toInt(),
+      name: json['name'] as String,
+    );
+
+Map<String, dynamic> _$ProfileToJson(Profile instance) => <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+    };

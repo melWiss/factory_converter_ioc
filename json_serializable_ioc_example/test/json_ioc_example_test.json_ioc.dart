@@ -14,4 +14,10 @@ void $registerJsonSerializableMethods() {
   JsonConverterIoc().registerConverter<User>(
     (model) => model.toJson(),
   );
+  JsonFactoryIoc().registerFactory<Profile>(
+    (json) => Profile.fromJson(json),
+  );
+  JsonConverterIoc().registerConverter<Profile>(
+    (model) => model.toJson(),
+  );
 }
