@@ -13,7 +13,12 @@ class JsonSerializableVisitor extends SimpleElementVisitor<void> {
 
     // find the factory constructor
     var factoryConstructors = element.constructors.where((element) {
-      return element.parameters.length == 1 && element.parameters.any((element) => element.type.getDisplayString() == 'Map<String, dynamic>',);
+      return element.parameters.length == 1 &&
+          element.parameters.any(
+            (element) =>
+                element.type.getDisplayString(withNullability: true) ==
+                'Map<String, dynamic>',
+          );
     });
 
     if (factoryConstructors.isNotEmpty) {
@@ -21,9 +26,13 @@ class JsonSerializableVisitor extends SimpleElementVisitor<void> {
     }
 
     // find the converter method
-    var converterMethods = element.methods.where((element) {
-      return element.parameters.isEmpty && element.returnType.getDisplayString() == 'Map<String, dynamic>';
-    },);
+    var converterMethods = element.methods.where(
+      (element) {
+        return element.parameters.isEmpty &&
+            element.returnType.getDisplayString(withNullability: true) ==
+                'Map<String, dynamic>';
+      },
+    );
 
     if (converterMethods.isNotEmpty) {
       converterName = converterMethods.first.displayName;
